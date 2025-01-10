@@ -1,5 +1,0 @@
-"""
-quantize model for optimization
-
-
-"""
