@@ -163,10 +163,12 @@ def process_image(path):
 
     return image
 
-def truncate(embedding):
-    return embedding[0:128]
+def truncate(embedding , i):
+    
+    return embedding[:,0:i]
 
 def get_embeddings(model , image):
+    
     # Get embeddings
     with torch.no_grad():
         embeddings = model(image)  # Shape: (1, embedding_size)
@@ -177,7 +179,10 @@ def get_embeddings(model , image):
 
     print(f"Embeddings Shape: {embeddings.shape}")
     print(f"Embeddings: {embeddings}")
-    new_embeddings = embeddings[:, 0:100]  # Removes the batch dimension
+    
+    
+    
+    new_embeddings = truncate(embedding = embeddings , i = 100)  # Removes the batch dimension
     print(f"New Embeddings Shape: {new_embeddings.shape}")
     print(f"New Embeddings: {new_embeddings}")
     return new_embeddings
