@@ -1,15 +1,19 @@
-
-from torch.nn import Linear, Conv2d, BatchNorm1d, BatchNorm2d, PReLU, ReLU, Sigmoid, Dropout2d, Dropout, AvgPool2d, MaxPool2d, AdaptiveAvgPool2d, Sequential, Module, Parameter
-from torch import nn
-import torch
+import os
 import math
+from torch.nn import Linear, Conv2d, BatchNorm2d, PReLU, Module, Sequential
+from torch.utils.data import DataLoader
+import torch
+from torchvision import datasets, transforms
+from torch.optim import Adam
+from torch import nn
 
+# Flatten and l2_norm remain unchanged
 class Flatten(Module):
     def forward(self, input):
         return input.view(input.size(0), -1)
 
-def l2_norm(input,axis=1):
-    norm = torch.norm(input,2,axis,True)
+def l2_norm(input, axis=1):
+    norm = torch.norm(input, 2, axis, True)
     output = torch.div(input, norm)
     return output
 
@@ -63,9 +67,11 @@ class Residual(Module):
         for _ in range(num_block):
             modules.append(Depth_Wise(c, c, residual=True, kernel=kernel, padding=padding, stride=stride, groups=groups))
         self.model = Sequential(*modules)
+    
     def forward(self, x):
         return self.model(x)
-
+    
+    
 class MobileFaceNet(Module):
     def __init__(self, embedding_size):
         super(MobileFaceNet, self).__init__()
@@ -78,10 +84,9 @@ class MobileFaceNet(Module):
         self.conv_45 = Depth_Wise(128, 128, kernel=(3, 3), stride=(2, 2), padding=(1, 1), groups=512)
         self.conv_5 = Residual(128, num_block=2, groups=256, kernel=(3, 3), stride=(1, 1), padding=(1, 1))
         self.conv_6_sep = Conv_block(128, 512, kernel=(1, 1), stride=(1, 1), padding=(0, 0))
-        self.conv_6_dw = Linear_block(512, 512, groups=512, kernel=(7,7), stride=(1, 1), padding=(0, 0))
+        self.conv_6_dw = Linear_block(512, 512, groups=512, kernel=(7, 7), stride=(1, 1), padding=(0, 0))
         self.conv_6_flatten = Flatten()
-        self.linear = Linear(512, embedding_size, bias=False)
-        self.bn = BatchNorm1d(embedding_size)
+        self.linear = Linear(128, embedding_size, bias=False)
         
         # weight initialization
         for m in self.modules():
@@ -91,91 +96,82 @@ class MobileFaceNet(Module):
             elif isinstance(m, nn.BatchNorm2d):
                 m.weight.data.fill_(1)
                 m.bias.data.zero_()
-    
+
     def forward(self, x):
-        out = self.conv1(x)
-
-        out = self.conv2_dw(out)
-
-        out = self.conv_23(out)
-
-        out = self.conv_3(out)
-        
-        out = self.conv_34(out)
-
-        out = self.conv_4(out)
-
-        out = self.conv_45(out)
-
-        out = self.conv_5(out)
-
-        out = self.conv_6_sep(out)
-
-        out = self.conv_6_dw(out)
-
-        out = self.conv_6_flatten(out)
-
-        out = self.linear(out)
-
-        out = self.bn(out)
-        return l2_norm(out)
+        x = self.conv1(x)
+        x = self.conv2_dw(x)
+        x = self.conv_23(x)
+        x = self.conv_3(x)
+        x = self.conv_34(x)
+        x = self.conv_4(x)
+        x = self.conv_45(x)
+        x = self.conv_5(x)
+        x = self.conv_6_sep(x)
+        x = self.conv_6_dw(x)
+        x = self.conv_6_flatten(x)
+        x = self.linear(x)
+        return x
 
 
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
+# Check device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-transform = transforms.Compose([
+# Instantiate model
+model = MobileFaceNet(embedding_size=512)
+model.to(device)
+
+# Define dataset
+data_transform = transforms.Compose([
     transforms.Resize((112, 112)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 ])
 
-dataset = datasets.ImageFolder("dataset/", transform=transform)
-data_loader = DataLoader(dataset, batch_size=64, shuffle=True)
+# Use a sample dataset (e.g., CelebA, or replace with another dataset)
 
+os.makedirs("./data", exist_ok=True)
+dataset_path = "./data/celeba"
+train_dataset = datasets.ImageFolder(dataset_path, transform=data_transform)
 
-import torch.optim as optim
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=4)
 
-# Initialize model, optimizer, and scheduler
-backbone = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=True)
-model = ArcFaceModel(backbone, embedding_size=512, num_classes=len(dataset.classes))
-optimizer = optim.Adam(model.parameters(), lr=1e-3)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-criterion = nn.CrossEntropyLoss()
+# Loss and optimizer
+criterion = nn.CrossEntropyLoss()  # Replace with ArcFace loss for face recognition if needed
+optimizer = Adam(model.parameters(), lr=0.001, weight_decay=5e-4)
 
 # Training loop
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
-
-for epoch in range(20):
+epochs = 10  # Adjust as needed
+for epoch in range(epochs):
     model.train()
-    for images, labels in data_loader:
+    running_loss = 0.0
+    for images, labels in train_loader:
         images, labels = images.to(device), labels.to(device)
-        
+
+        # Forward pass
+        embeddings = model(images)
+        loss = criterion(embeddings, labels)
+
+        # Backward pass and optimization
         optimizer.zero_grad()
-        logits, embeddings = model(images, labels)
-        loss = criterion(logits, labels)
         loss.backward()
         optimizer.step()
+
+        running_loss += loss.item()
     
-    scheduler.step()
-    print(f"Epoch {epoch+1}/{20}, Loss: {loss.item():.4f}")
+    print(f"Epoch [{epoch+1}/{epochs}], Loss: {running_loss / len(train_loader):.4f}")
 
+# Save the trained model
+os.makedirs("./models", exist_ok=True)
+torch.save(model.state_dict(), "./models/mobilefacenet_model_trained.pth")
+print("Trained model saved successfully.")
+
+# Load a test image and get embeddings
 model.eval()
+test_image = Image.open("examples/input/test_image.jpg")
+test_image = data_transform(test_image).unsqueeze(0).to(device)
+
 with torch.no_grad():
-    for images, _ in validation_loader:
-        images = images.to(device)
-        embeddings = model(images)
-        print(embeddings.shape)  # Use these for similarity comparisons
+    test_embeddings = model(test_image)
+    test_embeddings = l2_norm(test_embeddings)
 
-
-from sklearn.metrics.pairwise import cosine_similarity
-
-def recognize_face(test_embedding, database_embeddings, database_labels):
-    similarities = cosine_similarity(test_embedding, database_embeddings)
-    best_match = similarities.argmax()
-    return database_labels[best_match], similarities[0, best_match]
-
-
-torch.save(model.state_dict(), "./models/arcface_model.pth")
-print("Model saved successfully."
+print(f"Test Embeddings: {test_embeddings}")

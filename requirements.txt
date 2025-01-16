@@ -3,3 +3,4 @@ opencv-contrib-python
 torch
 numpy
 poetry
+dlib
