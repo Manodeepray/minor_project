@@ -175,14 +175,14 @@ def get_embeddings(model , image):
     print(f"Embeddings: {embeddings}")
 
     # Normalize embeddings for matching
-    embeddings = l2_norm(embeddings)
+    # embeddings = l2_norm(embeddings)
 
     print(f"Embeddings Shape: {embeddings.shape}")
     print(f"Embeddings: {embeddings}")
     
     
     
-    new_embeddings = truncate(embedding = embeddings , i = 100)  # Removes the batch dimension
+    new_embeddings = truncate(embedding = embeddings , i = 100)  # truncates the embeddings to 100 scalar values [1,100]
     print(f"New Embeddings Shape: {new_embeddings.shape}")
     print(f"New Embeddings: {new_embeddings}")
     return new_embeddings
@@ -212,6 +212,12 @@ def get_database(model , directory_path):
     return database_embeddings
     
     
+def euclidean_distance_similarity(embeddings1 , embeddings2):
+    euclidean_distance = torch.dist(embeddings1, embeddings2, p=float('inf'))
+    print(f"Euclidean Distance: {euclidean_distance}")
+    similarity = 1 / (1 + euclidean_distance)  # Higher score indicates higher similarity
+    print(f"Similarity Score: {similarity}")
+    return similarity
 
 def recognize_face(test_embedding, database_embeddings):
     labels = [ item for item in database_embeddings]
@@ -223,7 +229,8 @@ def recognize_face(test_embedding, database_embeddings):
         max_sim = 0
         for embedding in embeddings:
             
-            similarity = cosine_similarity(test_embedding, embedding)
+            # similarity = cosine_similarity(test_embedding, embedding)
+            similarity = euclidean_distance_similarity(test_embedding , embedding)
             if similarity > max_sim:
                 max_sim = similarity
         similarities.append(max_sim)
