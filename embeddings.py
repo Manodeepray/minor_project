@@ -250,7 +250,7 @@ if __name__ == "__main__":
     
     
     model = get_model()
-    image = process_image(path = "dataset/himanshu/Screenshot 2025-01-01 195907.png")
+    image = process_image(path = "dataset/manodeep/Screenshot 2025-01-01 200006.png")
     test_embedding = get_embeddings(model , image)
     directory_path = "dataset"
     database_embeddings = get_database(model,directory_path)
