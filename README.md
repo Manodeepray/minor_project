@@ -1,2 +1,5 @@
-using dlib facenet - resnet - to create embeddings
-note install cmake 
+get better image for face
+
+configure ebeddings
+
+use similarity .. give threshold

@@ -8,7 +8,7 @@ from torch.optim import Adam
 from torch import nn
 from sklearn.metrics.pairwise import cosine_similarity
 from PIL import Image
-
+import numpy as np
 import time
 
 
@@ -171,21 +171,21 @@ def get_embeddings(model , image):
     
     # Get embeddings
     with torch.no_grad():
-        embeddings = model(image)  # Shape: (1, embedding_size)
-    # print(f"Embeddings: {embeddings}")
+        embedding = model(image)  # Shape: (1, embedding_size)
+    # print(f"Embeddings: {embedding}")
 
     # Normalize embeddings for matching
-    # embeddings = l2_norm(embeddings)
-
-    # print(f"Embeddings Shape: {embeddings.shape}")
-    # print(f"Embeddings: {embeddings}")
+    # embedding = l2_norm(embedding)
+    # embedding = embedding / np.linalg.norm(embedding)
+    # print(f"Embeddings Shape: {embedding.shape}")
+    # print(f"Embeddings: {embedding}")
     
     
     
-    new_embeddings = truncate(embedding = embeddings , i = 100)  # truncates the embeddings to 100 scalar values [1,100]
-    # print(f"New Embeddings Shape: {new_embeddings.shape}")
-    # print(f"New Embeddings: {new_embeddings}")
-    return new_embeddings
+    new_embedding = truncate(embedding = embedding , i = 100) # truncates the embeddings to 100 scalar values [1,100]
+    # print(f"New Embeddings Shape: {new_embedding.shape}")
+    # print(f"New Embeddings: {new_embedding}")
+    return new_embedding
 
 
 
@@ -231,8 +231,8 @@ def recognize_face(test_embedding, database_embeddings):
         max_sim = 0
         for embedding in embeddings:
             
-            # similarity = cosine_similarity(test_embedding, embedding)
-            similarity = euclidean_distance_similarity(test_embedding , embedding)
+            similarity = cosine_similarity(test_embedding, embedding)
+            #similarity = euclidean_distance_similarity(test_embedding , embedding)
             if similarity > max_sim:
                 max_sim = similarity
         similarities.append(max_sim)

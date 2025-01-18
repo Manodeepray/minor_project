@@ -92,7 +92,7 @@ class FaceDetector:
             return faces_folder
         else:
             print("No faces detected.")
-            return None    
+            return "None"    
 
 def clear_directory(directory_path):
     """
