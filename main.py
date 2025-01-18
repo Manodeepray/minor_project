@@ -4,44 +4,40 @@ import embeddings
 import time
 import os
 
-database_directory_path = "dataset"
-model = embeddings.get_model()
-database_embeddings = embeddings.get_database(model,database_directory_path)
 
-detector = face_det.FaceDetector()
+def process_image(image_path):
 
-
-# start_time = time.time()
+    start_time = time.time()
+        
+        
     
-    
-# test_class_image_path = "examples/input/IMG-20241203-WA0004.jpg" 
 
-# image = cv2.imread(test_class_image_path)
-# print("image : ",image)
+    image = cv2.imread(image_path)
+    print("image : ",image)
 
-# faces_folder = detector.detect_faces(image)
+    faces_folder = detector.detect_faces(image)
 
-# faces_recognized = []
+    faces_recognized = []
 
-# for image in os.listdir(faces_folder):
-#     img_path = os.path.join(faces_folder , image)
-    
-#     image = embeddings.process_image(path = img_path)
-#     test_embedding = embeddings.get_embeddings(model , image)
+    for image in os.listdir(faces_folder):
+        img_path = os.path.join(faces_folder , image)
+        
+        image = embeddings.process_image(path = img_path)
+        test_embedding = embeddings.get_embeddings(model , image)
 
-#     similarities , pred_face = embeddings.recognize_face(test_embedding, database_embeddings)  
-#     print("for image :",img_path)
-#     print("similarities",similarities)
-#     print("predicted face :",pred_face)
-#     faces_recognized.append(pred_face)
+        similarities , pred_face = embeddings.recognize_face(test_embedding, database_embeddings)  
+        print("for image :",img_path)
+        print("similarities",similarities)
+        print("predicted face :",pred_face)
+        faces_recognized.append(pred_face)
 
-# print(faces_recognized)
+    print(faces_recognized)
 
-# end_time = time.time()
+    end_time = time.time()
 
-# duration = end_time - start_time
+    duration = end_time - start_time
 
-# print(f"Function duration: {duration:.4f} seconds")
+    print(f"Function duration: {duration:.4f} seconds")
 
 
 
@@ -119,5 +115,17 @@ def process_video(video_path,output_faces_folder="faces"):
     print(f"Function duration: {duration:.4f} seconds")
     print("Attendance : ",attendance)
 
-video_path = "examples/input/WIN_20250119_00_46_21_Pro.mp4"
-process_video(video_path)
+
+if __name__ == "__main__":
+        
+    database_directory_path = "dataset"
+    model = embeddings.get_model()
+    database_embeddings = embeddings.get_database(model,database_directory_path)
+
+    detector = face_det.FaceDetector()
+
+    video_path = "examples/input/WIN_20250119_00_46_21_Pro.mp4"
+    process_video(video_path)
+
+    # image_path = "examples/input/IMG-20241203-WA0008.jpg" 
+    # process_image(image_path)

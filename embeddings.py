@@ -252,7 +252,7 @@ if __name__ == "__main__":
     
     
     model = get_model()
-    image = process_image(path = "faces/face_5.jpg")
+    image = process_image(path = "faces/face_6.jpg")
     test_embedding = get_embeddings(model , image)
     directory_path = "dataset"
     database_embeddings = get_database(model,directory_path)

@@ -117,7 +117,7 @@ def clear_directory(directory_path):
 
 if __name__ == "__main__":
     detector = FaceDetector()
-    image = cv2.imread("examples/input/IMG-20241203-WA0001.jpg")
+    image = cv2.imread("examples/input/IMG-20241203-WA0008.jpg")
     print("image : ",image)
     faces_coordinates = detector.detect_faces(image)
     
