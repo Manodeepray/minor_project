@@ -9,7 +9,7 @@ from torch import nn
 from sklearn.metrics.pairwise import cosine_similarity
 from PIL import Image
 
-
+import time
 
 
 
@@ -172,19 +172,19 @@ def get_embeddings(model , image):
     # Get embeddings
     with torch.no_grad():
         embeddings = model(image)  # Shape: (1, embedding_size)
-    print(f"Embeddings: {embeddings}")
+    # print(f"Embeddings: {embeddings}")
 
     # Normalize embeddings for matching
     # embeddings = l2_norm(embeddings)
 
-    print(f"Embeddings Shape: {embeddings.shape}")
-    print(f"Embeddings: {embeddings}")
+    # print(f"Embeddings Shape: {embeddings.shape}")
+    # print(f"Embeddings: {embeddings}")
     
     
     
     new_embeddings = truncate(embedding = embeddings , i = 100)  # truncates the embeddings to 100 scalar values [1,100]
-    print(f"New Embeddings Shape: {new_embeddings.shape}")
-    print(f"New Embeddings: {new_embeddings}")
+    # print(f"New Embeddings Shape: {new_embeddings.shape}")
+    # print(f"New Embeddings: {new_embeddings}")
     return new_embeddings
 
 
@@ -196,6 +196,7 @@ def get_database(model , directory_path):
     names = os.listdir(directory_path)
     
     for name in names:
+        print(name)
         path = os.path.join(directory_path , name)
         images = os.listdir(path)
         
@@ -214,13 +215,14 @@ def get_database(model , directory_path):
     
 def euclidean_distance_similarity(embeddings1 , embeddings2):
     euclidean_distance = torch.dist(embeddings1, embeddings2, p=float('inf'))
-    print(f"Euclidean Distance: {euclidean_distance}")
+    # print(f"Euclidean Distance: {euclidean_distance}")
     similarity = 1 / (1 + euclidean_distance)  # Higher score indicates higher similarity
-    print(f"Similarity Score: {similarity}")
+    # print(f"Similarity Score: {similarity}")
     return similarity
 
 def recognize_face(test_embedding, database_embeddings):
     labels = [ item for item in database_embeddings]
+    print(labels)
     similarities = []
     for item in database_embeddings:
         print(item)
@@ -236,11 +238,11 @@ def recognize_face(test_embedding, database_embeddings):
         similarities.append(max_sim)
     
     index = similarities.index(max(similarities))
-    print(f" face recognized is of {labels[index]} ")
+    print(f" face recognized : {labels[index]} | similarity : {max(similarities)} ")
     print(labels , similarities)
+    pred_face = labels[index]
     
-    
-    return similarities
+    return similarities , pred_face 
 
 
 
@@ -250,10 +252,20 @@ if __name__ == "__main__":
     
     
     model = get_model()
-    image = process_image(path = "dataset/manodeep/Screenshot 2025-01-01 200006.png")
+    image = process_image(path = "faces/face_5.jpg")
     test_embedding = get_embeddings(model , image)
     directory_path = "dataset"
     database_embeddings = get_database(model,directory_path)
-    similarities = recognize_face(test_embedding, database_embeddings)
+    
+    
+    start_time = time.time()
+    
+    similarities = recognize_face(test_embedding, database_embeddings)  
     print("similarities",similarities)
+    
+    end_time = time.time()
+
+    duration = end_time - start_time
+    print(f"Function duration: {duration:.4f} seconds")
+
     
