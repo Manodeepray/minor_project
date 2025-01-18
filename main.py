@@ -124,8 +124,8 @@ if __name__ == "__main__":
 
     detector = face_det.FaceDetector()
 
-    video_path = "examples/input/WIN_20250119_00_46_21_Pro.mp4"
-    process_video(video_path)
+    # video_path = "examples/input/WIN_20250119_00_46_21_Pro.mp4"
+    # process_video(video_path)
 
-    # image_path = "examples/input/IMG-20241203-WA0008.jpg" 
-    # process_image(image_path)
+    image_path = "examples/input/IMG-20241203-WA0002.jpg" 
+    process_image(image_path)
