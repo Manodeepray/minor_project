@@ -1,0 +1,9 @@
+# data.yaml
+path: /home/oreonmayo/minor_project/minor_project/yolo_dataset  # Base directory for the dataset
+train: /home/oreonmayo/minor_project/minor_project/yolo_dataset  # Path to training images
+val: /home/oreonmayo/minor_project/minor_project/yolo_dataset   # Path to validation images
+names:
+  0: harshit
+  1: hasan
+  2: himanshu
+  3: manodeep

@@ -48,8 +48,17 @@ class FaceDetector:
     
 
     
-    def detect_faces(self, image):
+    def detect_faces(self, image , output_dir , clear_dir ,img ):
+        """
+        detects faces from image and saves it in output folder
         
+        Args:
+        image = input image data from cv.imread or pil
+        output_dir =  folder to save the cropped faces
+        clear_dir = clears the folder to prevent residual images
+        img = name of the person
+        
+        """
         h, w = image.shape[:2]
 
         # Set the input size for the detector
@@ -62,8 +71,9 @@ class FaceDetector:
         if success and faces is not None:
             # Create the "faces" folder if it doesn't exist
             faces_coordinates = []
-            faces_folder = "faces"
-            clear_directory(faces_folder)
+            faces_folder = output_dir
+            if clear_dir == True:
+                clear_directory(faces_folder)
             os.makedirs(faces_folder, exist_ok=True)
 
             for i, face in enumerate(faces):
@@ -76,10 +86,10 @@ class FaceDetector:
                     continue  # Skip if coordinates are invalid
 
                 # Extract the face ROI (Region of Interest)
-                face_roi = image[y:y + h, x:x + w]
+                face_roi = image[y+2:y + h+2, x-2:x + w+2]
 
                 # Save the face as a separate image
-                face_path = os.path.join(faces_folder, f"face_{i + 1}.jpg")
+                face_path = os.path.join(faces_folder, f"{img}_face_{i + 1}.jpg")
                 cv2.imwrite(face_path, face_roi)
                 print(f"Face {i + 1} saved at: {face_path}")
                 cv2.rectangle(image, (int(x), int(y)), (int(x + w), int(y + h)), (0, 255, 0), 2)
@@ -113,11 +123,52 @@ def clear_directory(directory_path):
     else:
         print(f"Directory '{directory_path}' does not exist.")
 
- 
-
-if __name__ == "__main__":
+def get_train_dataset():
+    """
+     Iterates through the dataset of images and saves the detected face for model training
+     
+     
+    """
     detector = FaceDetector()
-    image = cv2.imread("examples/input/IMG-20241203-WA0008.jpg")
-    print("image : ",image)
-    faces_coordinates = detector.detect_faces(image)
+    
+    dataset_dir = "./dataset"
+    new_dataset_dir = "./yolo_dataset_train/train"
+    
+    
+    os.makedirs(new_dataset_dir , exist_ok = True)
+    
+    
+    for item in os.listdir(dataset_dir):
+        
+        dir_path = os.path.join( dataset_dir,item )
+        print("dir_path : ",dir_path)
+        
+        new_dir_path = os.path.join(new_dataset_dir , item)
+        print("new_dir_path : ",new_dir_path)
+        
+        os.makedirs( new_dir_path, exist_ok= True)
+        
+        
+        for img in os.listdir(dir_path):
+        
+            img_path = os.path.join( dir_path,img)
+        
+            print("img_path :",img_path)
+        
+            image = cv2.imread(img_path)
+        
+            face = detector.detect_faces(image , new_dir_path , clear_dir = False , img = img)
+    
+if __name__ == "__main__":
+    
+    # testing the detector
+    # detector = FaceDetector()
+
+    # image = cv2.imread("examples/input/IMG-20241203-WA0008.jpg")
+    # print("image : ",image)
+    # img = "1"
+    
+    # faces_coordinates = detector.detect_faces(image , 'faces' , clear_dir = True , img = img)
+    
+    get_train_dataset()        
     
