@@ -1,5 +1,1 @@
-get better image for face
-
-configure ebeddings
-
-use similarity .. give threshold
+trying out deepface - [VGG-Face , FaceNet, OpenFace, DeepFace, DeepID, ArcFace, Dlib]
