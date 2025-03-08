@@ -48,11 +48,85 @@ def process_image(image_path , detector , recognizer):
 ################################################### WEBCAM #########################################$$$$$$$$
 
 
+import cv2
+import os
+import time
+
+def process_video_from_webcam(detector, recognizer, output_faces_folder="video_output"):
+    """
+    Detects faces from webcam frames and classifies the face in real time.
+    """
+    attendance = []
+    # Create folder to save detected faces
+    os.makedirs(output_faces_folder, exist_ok=True)
+
+    # Open the webcam (0 for default camera)
+    cap = cv2.VideoCapture(0)
+
+    if not cap.isOpened():
+        print("Error: Could not access the webcam.")
+        return
+
+    # Get video properties
+    fps = cap.get(cv2.CAP_PROP_FPS) if cap.get(cv2.CAP_PROP_FPS) > 0 else 30  # Set default FPS if unknown
+    frame_interval = int(fps * 0.5)  # Process frames every 0.5 seconds
+    frame_count = 0
+    
+
+    print("Press 'q' to stop the webcam feed.")
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Error: Unable to read frame from webcam.")
+            break
+
+        # Process every nth frame
+        if frame_count % frame_interval == 0:
+            cropped_face_folder = "faces"
+            print("Processing frame...")
+
+            # Detect faces
+            face_folder, _, _ = detector.detect_faces(frame, cropped_face_folder, clear_dir=True, img=frame_count)
+
+            if face_folder.lower() == "none":
+                print("No faces detected.")
+                continue
+
+            faces_recognized = []
+            if len(os.listdir(face_folder)) != 0:
+                for image in os.listdir(face_folder):
+                    img_path = os.path.join(face_folder, image)
+                    name = recognizer.get_face_from_cropped(img_path)
+                    recognizer.count += 1
+                    faces_recognized.append(name)
+
+                print(f"Recognized faces: {faces_recognized}")
+
+            attendance.append(faces_recognized)
+
+        frame_count += 1
+        print(f"Frame {frame_count}: {faces_recognized}")
+
+        # Display the webcam feed
+        cv2.imshow("Webcam Feed", frame)
+
+        # Press 'q' to exit
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
+    # Clean up
+    cap.release()
+    cv2.destroyAllWindows()
+
+    # Print attendance results
+    print("\nFinal Attendance List:", attendance)
 
 
 
 
 
+################################################### video ###################################################
 
 def process_video(video_path,detector , recognizer , output_faces_folder="video_output" ):
     
