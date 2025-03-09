@@ -9,7 +9,7 @@ import face_recog
 
 
 
-def process_image(image_path , detector , recognizer):
+def process_image(image_path , detector , recognizer ,output_frames_dir = "frames_output"):
 
     start_time = time.time()
         
@@ -21,7 +21,8 @@ def process_image(image_path , detector , recognizer):
 
     cropped_face_folder = 'faces'
     img = "test_main"
-    face_folder , _ , _= detector.detect_faces(image ,cropped_face_folder  , clear_dir = True , img = img)
+    face_folder , _ , _= detector.detect_faces(image ,cropped_face_folder  , clear_dir = True , img = img,
+                                               output_frames_dir=output_frames_dir)
 
     faces_recognized = []
 
@@ -52,13 +53,13 @@ import cv2
 import os
 import time
 
-def process_video_from_webcam(detector, recognizer, output_faces_folder="video_output"):
+def process_video_from_webcam(detector, recognizer, output_frames_dir="frames_output"):
     """
     Detects faces from webcam frames and classifies the face in real time.
     """
     attendance = []
     # Create folder to save detected faces
-    os.makedirs(output_faces_folder, exist_ok=True)
+    os.makedirs(output_frames_dir, exist_ok=True)
 
     # Open the webcam (0 for default camera)
     cap = cv2.VideoCapture(0)
@@ -87,7 +88,10 @@ def process_video_from_webcam(detector, recognizer, output_faces_folder="video_o
             print("Processing frame...")
 
             # Detect faces
-            face_folder, _, _ = detector.detect_faces(frame, cropped_face_folder, clear_dir=True, img=frame_count)
+            face_folder, _, _ = detector.detect_faces(frame, cropped_face_folder,
+                                                      clear_dir=True,
+                                                      img=frame_count,
+                                                      output_frames_dir=output_frames_dir)
 
             if face_folder.lower() == "none":
                 print("No faces detected.")
@@ -128,13 +132,13 @@ def process_video_from_webcam(detector, recognizer, output_faces_folder="video_o
 
 ################################################### video ###################################################
 
-def process_video(video_path,detector , recognizer , output_faces_folder="video_output" ):
+def process_video(video_path,detector , recognizer , output_frames_dir="frames_output" ):
     
     """
     detects faces from video frames and classifies the face
     """
     # Create folder to save faces
-    os.makedirs(output_faces_folder, exist_ok=True)
+    os.makedirs(output_frames_dir, exist_ok=True)
 
     # Open the video file
     cap = cv2.VideoCapture(video_path)
@@ -164,7 +168,7 @@ def process_video(video_path,detector , recognizer , output_faces_folder="video_
             cropped_face_folder = 'faces'
             img = "test_video_main"
             print(frame)
-            face_folder ,_ ,_= detector.detect_faces(frame ,cropped_face_folder  , clear_dir = True , img = frame_count)
+            face_folder ,_ ,_= detector.detect_faces(frame ,cropped_face_folder  , clear_dir = True , img = frame_count, output_frames_dir= output_frames_dir)
             
             
             
@@ -211,8 +215,8 @@ if __name__ == "__main__":
     recognizer = face_recog.FaceRecognizer()
     
     # # video_path = "/home/oreonmayo/minor_project/minor_project/examples/input/29_01_25.mp4"
-    # video_path = "examples/input/WIN_20250119_00_46_21_Pro.mp4"
-    # process_video(video_path, detector , recognizer )
+    video_path = "examples/input_examples/WIN_20250119_00_46_21_Pro.mp4"
+    process_video(video_path, detector , recognizer )
 
-    image_path = "/home/oreonmayo/minor_project/minor_project/examples/input/IMG-20241203-WA0008.jpg" 
-    process_image(image_path , detector , recognizer )
+    # image_path = "/home/oreonmayo/minor_project/minor_project/examples/input/IMG-20241203-WA0008.jpg" 
+    # process_image(image_path , detector , recognizer )

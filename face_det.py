@@ -48,7 +48,7 @@ class FaceDetector:
     
 
     
-    def detect_faces(self, image , output_dir , clear_dir ,img ):
+    def detect_faces(self, image , output_dir , clear_dir ,img ,output_frames_dir):
         """
         detects faces from image and saves it in output folder
         
@@ -134,7 +134,7 @@ class FaceDetector:
                 
                 
                 
-            output_path = f"examples/output/output_with_faces_{img}.jpg"
+            output_path = f"{output_frames_dir}/output_with_faces_{img}.jpg"
             
             cv2.imwrite(output_path, image)
             
@@ -221,15 +221,15 @@ def get_train_dataset():
             face = detector.detect_faces(image , new_dir_path , clear_dir = False , img = img)
     
 if __name__ == "__main__":
-    
+    pass
     # testing the detector
-    detector = FaceDetector()
+    # detector = FaceDetector()
 
-    image = cv2.imread("examples/input/IMG-20241203-WA0008.jpg")
-    print("image : ",image)
-    img = "1"
+    # image = cv2.imread("examples/input/IMG-20241203-WA0008.jpg")
+    # print("image : ",image)
+    # img = "1"
     
-    _,_,_ = detector.detect_faces(image , 'faces' , clear_dir = True , img = img)
+    # _,_,_ = detector.detect_faces(image , 'faces' , clear_dir = True , img = img)
     
     # get_train_dataset()        
     
