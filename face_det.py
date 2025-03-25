@@ -1,11 +1,14 @@
 import cv2
 from config import config
 import os
+
+import shutil
+
 image_size = (config['IMGSIZE'] , config['IMGSIZE'])
 
 class FaceDetector:
     def __init__(self):
-        self.detector = cv2.FaceDetectorYN_create('models/face_detection_yunet_2023mar.onnx',
+        self.detector = cv2.FaceDetectorYN_create('./models/face_detection_yunet_2023mar.onnx',
                                 "", 
                                 image_size,
                                 score_threshold=0.9)
@@ -61,17 +64,18 @@ class FaceDetector:
         """
         
         h, w = image.shape[:2]
+        _frame = image
 
         # Set the input size for the detector
         self.detector.setInputSize((w, h))
         
-        
         try:
             # Detect faces
             success, faces = self.detector.detect(image)
-            print(f" Faces detected - sucess : {success} | faces : {faces}")
+            print(f" Faces detected - sucess : {success} | faces : {faces}\n")
         except:
-            print("faces not detected")
+
+            print("faces not detected\n")
             # break
         
         # success, faces = self.detector.detect(image)
@@ -79,7 +83,7 @@ class FaceDetector:
         
         # Check if faces are detected
         if success and faces is not None:
-            print("success and faces not None")
+            print("success and faces not None \n")
         
         
         
@@ -134,7 +138,7 @@ class FaceDetector:
                 
                 
                 
-            output_path = f"{output_frames_dir}/output_with_faces_{img}.jpg"
+            output_path = f"{output_frames_dir}/faceDet_output_{img}.jpg"
             
             cv2.imwrite(output_path, image)
             
@@ -145,7 +149,15 @@ class FaceDetector:
             return faces_folder , faces_coordinates , faces
         
         else:
-            print("No faces detected.")
+            output_path = f"{output_frames_dir}/faceDet_output_{img}.jpg"
+            
+            cv2.imwrite(output_path, _frame)
+         
+            
+            print(f"Output image saved at: {output_path}")
+            
+            print("No faces detected.\n")
+            
             return "None" , [] ,[]
 
 

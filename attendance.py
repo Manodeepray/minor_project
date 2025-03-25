@@ -187,6 +187,29 @@ def get_attendance_from_video(video_path, output_frames_dir="frames_output"):
     return Attendance, output_frames_dir
 
 
+
+from tools.attendance_to_csv import save_dicts_to_csv
+from tools.convert_to_video import frames_to_video
+from analysis import analyze_attendance_csv 
+import conv_vid_format
+
+
+
+def process_video(video_file_path , class_name):
+    """Processes the recorded video."""
+    
+    csv_filename=f"./attendance_csv/{class_name}.csv"
+    Attendance, output_frames_dir = get_attendance_from_video(video_path=video_file_path)
+    
+    csv_filepath = save_dicts_to_csv(dict_list=Attendance, csv_filename = csv_filename)
+    output_video_path = frames_to_video(output_frames_dir, "./processed_video/output_video.mp4", fps=1)
+
+    attendance_df = analyze_attendance_csv(csv_filepath)  
+    attendance_df.to_csv(csv_filepath, index=False)
+    return output_video_path, csv_filepath
+
+
+
 if __name__== "__main__":
     
     
@@ -206,7 +229,7 @@ if __name__== "__main__":
     #            recognizer = recognizer)
     
     
-    Attendance , output_frames_dir = get_attendance_from_video(video_path = "/home/oreonmayo/minor_project/minor_project/recorded_videos/29_01_25.mp4")
+    Attendance , output_frames_dir = get_attendance_from_video(video_path = "./recorded_videos/output.mp4")
     save_dicts_to_csv(dict_list = Attendance ,csv_filename = "./attendance_csv/attendance.csv" )
     frames_to_video(output_frames_dir,"./processed_video/output_video.mp4", fps=1)
     

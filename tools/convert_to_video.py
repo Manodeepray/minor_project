@@ -32,6 +32,7 @@ def frames_to_video(image_dir, output_video_path, fps=30):
 
     video_writer.release()
     print(f"Video saved as: {output_video_path}")
+    return output_video_path
 
 if __name__=="__main__":
 # Example usage

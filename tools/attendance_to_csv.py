@@ -29,6 +29,8 @@ def save_dicts_to_csv(dict_list, csv_filename="output.csv"):
             writer.writerow(entry)  # Write each dictionary as a row
 
     print(f"CSV file '{csv_filename}' created successfully!")
+    
+    return csv_filename
 
 if __name__=="__main__":
     # Example Usage

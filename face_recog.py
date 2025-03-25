@@ -9,7 +9,7 @@ import os
 
 class FaceRecognizer:
     def __init__(self):
-        self.model = YOLO('/home/oreonmayo/minor_project/minor_project/models/yolov8_trained.pt')  # Use the classification model (nano version)
+        self.model = YOLO('./models/yolov11l_trained.pt')  # Use the classification model (nano version)
         self.count = 0
         
         

@@ -3,4 +3,12 @@ opencv-contrib-python
 torch
 numpy
 poetry
-dlib
+# dlib
+ultralytics
+natsort
+streamlit
+pyaudio
+SpeechRecognition
+pymongo
+pandas
+python-dotenv

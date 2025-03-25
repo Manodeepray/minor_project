@@ -7,6 +7,8 @@ def clear_directory(directory_path):
     """
     Recursively deletes all contents of the given directory without deleting the directory itself.
     """
+    
+    print("\n\nclearing DiR\n\n")
     if os.path.exists(directory_path):
         # Iterate over all files and subdirectories
         for item in os.listdir(directory_path):
