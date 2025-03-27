@@ -18,10 +18,14 @@ class FaceRecognizer:
         return self.model
     
     def get_face_from_cropped(self,img_path):
-        results = self.model.predict(source = img_path , save = True , save_txt = True)
-        for result in results:
-            print(f" \n Top-1 Class: {result.names[result.probs.top1]}, Confidence: {result.probs.top1conf:.4f}")
-        return result.names[result.probs.top1]
+        if img_path is not None:
+            print("\n\n",img_path,"\n\n")
+            results = self.model.predict(source = img_path , save = True , save_txt = True)
+            for result in results:
+                print(f" \n Top-1 Class: {result.names[result.probs.top1]}, Confidence: {result.probs.top1conf:.4f}")
+            return result.names[result.probs.top1]
+        else:
+            return "None"
     
     def get_batch_inference(self,dir_path = "./faces"):
         
@@ -31,17 +35,22 @@ class FaceRecognizer:
             img_paths[i] = img_path        
         print(img_paths)
         
+        if img_paths == None or len(img_paths) == 0:
+            frame_results = ["None"]
+            return frame_results 
         
-        results = self.model.predict(img_paths)
-        
-        names =  results[0].names
-        # for result in results:
-        #     names =  results.names
-            # print(f"\n result : {names[result.probs.top1]} | conf : {result.probs.top1conf} ")
+        else:
+            results = self.model.predict(img_paths)
             
-        frame_results = [names[result.probs.top1] for result in results]
+            names =  results[0].names
+            # for result in results:
+            #     names =  results.names
+                # print(f"\n result : {names[result.probs.top1]} | conf : {result.probs.top1conf} ")
+                
+            frame_results = [names[result.probs.top1] for result in results]
+            print(f"frame_results : {frame_results}")
             
-        return frame_results
+            return frame_results
 
 
 

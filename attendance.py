@@ -65,14 +65,15 @@ def process_batch_faces(image_path , detector , recognizer,output_frames_dir,fra
     faces_recognized = recognizer.get_batch_inference(dir_path = cropped_face_folder)
 
     # print(faces_recognized)
-
+    
     end_time = time.time()
 
-    duration = end_time - start_time
 
     # print(f"Function duration: {duration:.4f} seconds")
-    
-    return faces_recognized ,frame_faces_coordinates 
+    if faces_recognized == None or len(faces_recognized) == 0:
+        return ["None"]
+    else:
+        return faces_recognized ,frame_faces_coordinates 
 
 
 

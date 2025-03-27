@@ -6,7 +6,7 @@ from watchdog.events import FileSystemEventHandler
 import pipeline_attendance
 import llm_integration
 from pydub import AudioSegment
-from tools import logging
+from tools import logging_own
 
 
 
@@ -72,13 +72,18 @@ def process_video_and_audio(video_path):
     print(f"✅ Completed video processing: {video_path}")
 
     # 🔎 Check for a matching audio file
-    audio_path = os.path.join(AUDIO_DIR, f"{class_name}.mp3")
+    audio_path = os.path.join(AUDIO_DIR, f"{class_name}.wav")
+    if os.path.exists(audio_path):
+        pass
+    else:
+        audio_path = os.path.join(AUDIO_DIR, f"{class_name}.mp3")
+    
     audio_path = audio_path.replace("\r","/r")
     print(f"audio path: {audio_path}")
     
     
     
-    if ".mp3" in audio_path:
+    if ".mp3" in audio_path :
         audio_path = convert_mp3_to_wav(audio_path)
         
     
@@ -88,7 +93,7 @@ def process_video_and_audio(video_path):
     else:
         print(f"❌ No matching audio file found for: {video_path}")
 
-    logging.save_processed_video(video_path)
+    logging_own.save_processed_video(video_path)
 
 
 
@@ -147,7 +152,7 @@ def process_existing_videos():
     """Process all existing videos before starting live monitoring."""
     print("🔍 Checking for existing videos...")
 
-    processed_videos = logging.load_processed_videos()
+    processed_videos = logging_own.load_processed_videos()
     
 
     
@@ -167,7 +172,8 @@ def process_existing_videos():
                 
                 
     print(f"✅ Found {len(video_queue)} videos to process.")
-    op = input("continue?yes[y]/no[n]")
+    # op = input("continue?yes[y]/no[n]")
+    op = "y"
     if op.lower() == 'y':
         pass
     else:
