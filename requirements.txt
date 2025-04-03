@@ -12,3 +12,9 @@ SpeechRecognition
 pymongo
 pandas
 python-dotenv
+flask
+watchdog
+opencv-python
+vosk
+groq
+pydub
