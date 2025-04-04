@@ -28,7 +28,8 @@ def upload_file():
         return 'No selected file', 400
 
     # Generate a unique filename
-    filename = f"uploaded_{int(time.time())}_{file.filename}"
+    # filename = f"uploaded_{int(time.time())}_{file.filename}"
+    filename = f"uploaded_{file.filename}"
     file_path = os.path.join(UPLOAD_FOLDER, filename)
 
     # Save the uploaded file

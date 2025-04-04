@@ -68,7 +68,7 @@ def process_video_and_audio(video_path):
     
     
     output_video_path, csv_filepath, converted_output_video_path = pipeline_attendance.process_video(video_path, class_name)
-
+    
     print(f"✅ Completed video processing: {video_path}")
 
     # 🔎 Check for a matching audio file

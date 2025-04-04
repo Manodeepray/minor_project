@@ -189,9 +189,9 @@ def generate_notes(transcription , client, NOTES_DIR , class_name):
     prompt = f"""
     Please summarize the main points and create structured class notes, including key topics, subpoints, and any important details in an .md format
     
-    i want to store them in a .md file
-    
-    context
+    1.i want to store them in a .md file
+    2.if no context write no transcription found
+    context : 
     {transcription}
     
     """
