@@ -3,10 +3,10 @@ import os
 from pathlib import Path
 
 # Directory paths
-VIDEO_DIR = "database_videos"
-CSV_DIR = "database_attendance"
-NOTES_DIR = "database_notes"
-AUDIO_DIR = "database_audios"
+VIDEO_DIR = "./data/database/database_videos"
+CSV_DIR = "./data/database/database_attendance"
+NOTES_DIR = "./data/database/database_notes"
+AUDIO_DIR = "./data/database/database_audios"
 
 def get_files(directory, extensions):
     """Get files with specific extensions from a directory"""

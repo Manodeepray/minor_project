@@ -1,37 +1,30 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+
+
+
 import streamlit as st
 import cv2
-import os
 import time
 import pandas as pd
 from datetime import datetime
-from record_face import record_class    
-from attendance import get_attendance_from_video
-from tools.attendance_to_csv import save_dicts_to_csv
-from tools.convert_to_video import frames_to_video
-from analysis import analyze_attendance_csv 
-import conv_vid_format
-
-
-import streamlit as st
-import cv2
-import os
-import time
-import pandas as pd
-
-import streamlit as st
-import cv2
-import os
+from pipelines.core.record_face import record_class    
+from pipelines.core.attendance import get_attendance_from_video
+from pipelines.core.tools.attendance_to_csv import save_dicts_to_csv
+from pipelines.core.tools.convert_to_video import frames_to_video
+from pipelines.core.analysis import analyze_attendance_csv 
+from pipelines.core import conv_vid_format
 import tempfile
-import time
-from tools.send_csv import send_csv_Mongodb
+from pipelines.core.tools.send_csv import send_csv_Mongodb
 
 import logging
 logging.getLogger('streamlit').setLevel(logging.ERROR)
 
 # Ensure necessary directories exist
-os.makedirs("recorded_videos", exist_ok=True)
-os.makedirs("processed_video", exist_ok=True)
-os.makedirs("attendance_csv", exist_ok=True)
+os.makedirs("./data/raw/recorded_videos", exist_ok=True)
+os.makedirs("./data/raw/processed_video", exist_ok=True)
+os.makedirs("./data/database/database_attendance_csv", exist_ok=True)
 
 # Initialize session state variables
 
@@ -39,11 +32,11 @@ os.makedirs("attendance_csv", exist_ok=True)
 def process_video(video_file_path , class_name):
     """Processes the recorded video."""
     
-    csv_filename=f"./attendance_csv/{class_name}.csv"
+    csv_filename=f"./data/database/database_attendance_csv/{class_name}.csv"
     Attendance, output_frames_dir = get_attendance_from_video(video_path=video_file_path)
     
     csv_filepath = save_dicts_to_csv(dict_list=Attendance, csv_filename = csv_filename)
-    output_video_path = frames_to_video(output_frames_dir, "./processed_video/output_video.mp4", fps=1)
+    output_video_path = frames_to_video(output_frames_dir, "./data/processed/processed_video/output_video.mp4", fps=1)
 
     attendance_df = analyze_attendance_csv(csv_filepath)  
     attendance_df.to_csv(csv_filepath, index=False)

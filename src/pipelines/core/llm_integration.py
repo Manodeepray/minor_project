@@ -14,6 +14,9 @@ from groq import Groq
 
 load_dotenv()
 
+
+GROQ_LLM_MODEL_ID = "llama3-8b-8192"
+
 def record_audio(AUDIO_DIR, record_seconds=5, sample_rate=44100, channels=1):
     # Initialize PyAudio
     
@@ -193,7 +196,7 @@ def generate_notes(transcription , client, NOTES_DIR , class_name):
     """
     
     response = client.chat.completions.create(
-        model="llama3-8b-8192",  # Use the appropriate Groq model
+        model=GROQ_LLM_MODEL_ID,  # Use the appropriate Groq model
         messages=[{"role": "user", "content": prompt}],
         max_tokens=1024,
         temperature=0.7
