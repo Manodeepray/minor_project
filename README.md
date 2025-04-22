@@ -52,8 +52,8 @@ graph TD;
 
 1. Clone the repository:
    ```bash
-   git clone <repo-url>
-   cd <repo-folder>
+   git clone https://github.com/manodeepray/minor_project
+   cd minor_project
    ```
 
 2. (Recommended) Create and activate a virtual environment:
