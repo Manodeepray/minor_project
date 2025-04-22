@@ -3,17 +3,17 @@ import time
 import threading
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import pipeline_attendance
-import llm_integration
+from src.pipelines import pipeline_attendance
+from src.pipelines.core import llm_integration
 from pydub import AudioSegment
-from tools import logging_own
+from src.pipelines.core.tools import logging_own
 
 
 
-VIDEO_DIR = "./database_videos"
-AUDIO_DIR = "./database_audios"
-TRANSCRIPT_DIR = './transcription'
-NOTES_DIR = "./database_notes"
+VIDEO_DIR = "./data/database/database_videos"
+AUDIO_DIR = "./data/database/database_audios"
+TRANSCRIPT_DIR = './data/raw/transcription'
+NOTES_DIR = "./data/database/database_notes"
 
 # Queue for processing
 video_queue = []

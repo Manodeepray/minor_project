@@ -1,11 +1,11 @@
 from flask import Flask, request
 import os
 import time
-from tools import separation  # Ensure this module exists
+from src.pipelines.core.tools import separation  # Ensure this module exists
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = 'uploaded_videos'
+UPLOAD_FOLDER = './data/raw/uploaded_videos'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def clean_dir(directory: str) -> None:
