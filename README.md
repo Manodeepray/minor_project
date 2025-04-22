@@ -1,6 +1,5 @@
 trying out deepface - [VGG-Face , FaceNet, OpenFace, DeepFace, DeepID, ArcFace, Dlib]
 
-choco install ffmpeg
 
 sudo apt install ffmpeg -y
 
