@@ -1,7 +1,3 @@
-Thanks for the clarification! I've updated the environment variable to `GROQ_LLM_MODEL_ID` and added a step for creating a virtual environment under **Setup & Installation**. Here's the revised version:
-
----
-
 # **Classroom Monitoring System**
 
 A deployable, AI-powered classroom monitoring solution using **Computer Vision** and **Natural Language Processing**. It captures **attendance**, tracks **student attentiveness**, and auto-generates **lecture notes** from classroom sessions.
@@ -12,6 +8,7 @@ A deployable, AI-powered classroom monitoring solution using **Computer Vision**
 
 ✅ **Face Detection and Recognition for Attendance**  
 ✅ **Attentiveness Tracking**  
+
 ✅ **Audio Transcription & Summarization**  
 ✅ **Deployable Server-Based Pipeline**  
 ✅ **Streamlit-Based Demo UI**
